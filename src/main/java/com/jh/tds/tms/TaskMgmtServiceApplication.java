@@ -1,4 +1,4 @@
-package com.jh.tms;
+package com.jh.tds.tms;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,0 +1,171 @@
+openapi: 3.0.3
+info:
+  title: Task Management Service
+  description: API for managing tasks in the Task Display System.
+  version: 1.0.0
+servers:
+  - url: /api/tasks
+    description: Base URL for Task Management APIs
+paths:
+  /create:
+    post:
+      summary: Create a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '200':
+          description: Task successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+  /fetch/{id}:
+    get:
+      summary: Get a task by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+  /fetch/all:
+    get:
+      summary: Get all tasks
+      responses:
+        '200':
+          description: List of all tasks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+  /update/{id}:
+    put:
+      summary: Update a task by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '200':
+          description: Task successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+  /delete/{id}:
+    delete:
+      summary: Delete a task by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Task successfully deleted.
+  /assignedTo/{userId}:
+    get:
+      summary: Get tasks assigned to a specific user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of tasks assigned to the user.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+  /department/{departmentId}:
+    get:
+      summary: Get tasks by department ID
+      parameters:
+        - name: departmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of tasks belonging to the department.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+  /status/{status}:
+    get:
+      summary: Get tasks by status
+      parameters:
+        - name: status
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of tasks with the specified status.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique task ID.
+        title:
+          type: string
+          description: Task title.
+        description:
+          type: string
+          description: Task description.
+        assignedToUserId:
+          type: string
+          description: ID of the user assigned to the task.
+        departmentId:
+          type: string
+          description: ID of the department associated with the task.
+        dueDate:
+          type: string
+          format: date-time
+          description: Due date for the task.
+        status:
+          type: string
+          description: Status of the task (e.g., "Open", "In Development", "Completed").
+        priority:
+          type: string
+          description: Priority of the task (e.g., "High", "Medium", "Low").
