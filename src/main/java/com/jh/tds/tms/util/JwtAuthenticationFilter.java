@@ -26,7 +26,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         System.out.println("Task service ===>>>> Processing request for path: " + path);
 
-
+        if (shouldNotFilter(request)) {
+            System.out.println("Skipping filter for path: " + path);
+            filterChain.doFilter(request, response);
+            return;
+        }
         /*String token = request.getHeader("Authorization");
         System.out.println("token --->>> " + token);
         if (token != null && token.startsWith("Bearer ")) {
@@ -73,5 +77,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return header.split(" ")[1].trim();
         }
         return null;
+    }
+    // Check if the request should bypass JWT validation
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        // Exclude /api/users/register from JWT validation
+        return path.startsWith("/api/tasks");
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000") // Allow only your frontend URL
 @RequestMapping("/api/tasks")
 @Tag(name = "Task Management", description = "Endpoints for managing tasks")
 public class TaskController {
@@ -41,9 +42,14 @@ public class TaskController {
         taskService.deleteTask(id);
     }
 
-    @GetMapping("/assignedTo/{userId}")
+   /* @GetMapping("/assignedTo/{userId}")
     public List<Task> getTasksByAssignedToUserId(@PathVariable String userId) {
         return taskService.getTasksByAssignedToUserId(userId);
+    }*/
+
+    @GetMapping("/assignedTo/{userName}")
+    public List<Task> getTasksByAssignedToUserName(@PathVariable String userName) {
+        return taskService.getTasksByAssignedToUserName(userName);
     }
 
     @GetMapping("/department/{departmentId}")

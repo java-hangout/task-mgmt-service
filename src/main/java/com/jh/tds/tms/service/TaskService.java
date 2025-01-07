@@ -1,11 +1,17 @@
 package com.jh.tds.tms.service;
 
 import com.jh.tds.tms.model.Task;
+import com.jh.tds.tms.model.User;
 import com.jh.tds.tms.registry.TaskRepository;
+import com.jh.tds.tms.registry.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -16,9 +22,23 @@ public class TaskService {
     @Autowired
     private SequenceGeneratorService sequenceGeneratorService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;  // RestTemplate for communication with Department Service
+
+    @Value("${user.service.base.url}")  // URL for Department Service
+    private String userServiceUrl;
+
     public Task createTask(Task task) {
         // Generate a custom ID for the task
         task.setId(sequenceGeneratorService.generateTaskId());
+        task.setCreatedDate(new Date());
+        task.setUpdatedDate(new Date());
+        User user = getUserDetails(task.getAssignedToUserName());
+        task.setDepartmentId(user.getDepartmentId());
+
         return taskRepository.save(task);
     }
 
@@ -31,8 +51,10 @@ public class TaskService {
     }
 
     public Task updateTask(String id, Task task) {
-        if (taskRepository.existsById(id)) {
+        Optional<Task> task1 = taskRepository.findById(id);
+        if (task1.isPresent()) {
             task.setId(id);
+            task.setCreatedDate(task1.get().getCreatedDate());
             return taskRepository.save(task);
         }
         return null;
@@ -42,8 +64,12 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
-    public List<Task> getTasksByAssignedToUserId(String userId) {
+    /*public List<Task> getTasksByAssignedToUserId(String userId) {
         return taskRepository.findByAssignedToUserId(userId);
+    }*/
+
+    public List<Task> getTasksByAssignedToUserName(String userName) {
+        return taskRepository.findByAssignedToUserName(userName);
     }
 
     public List<Task> getTasksByDepartmentId(String departmentId) {
@@ -52,5 +78,16 @@ public class TaskService {
 
     public List<Task> getTasksByStatus(String status) {
         return taskRepository.findByStatus(status);
+    }
+
+    private User getUserDetails(String userName) {
+        // Build the URL for the Department Service API to check if the department exists
+        String usermgmtFindUrl = userServiceUrl + "/api/users/fetch/username/" + userName;
+        System.out.println("department Find Url : " + usermgmtFindUrl);
+        // Make a GET request to check if the department exists
+        User user = restTemplate.getForObject(usermgmtFindUrl, User.class);
+        System.out.println("user : " + user);
+
+        return user;
     }
 }
