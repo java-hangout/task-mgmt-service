@@ -1,5 +1,6 @@
 package com.jh.tds.tms.service;
 
+import com.jh.tds.tms.model.Department;
 import com.jh.tds.tms.model.Task;
 import com.jh.tds.tms.model.User;
 import com.jh.tds.tms.registry.TaskRepository;
@@ -30,6 +31,8 @@ public class TaskService {
 
     @Value("${user.service.base.url}")  // URL for Department Service
     private String userServiceUrl;
+    @Value("${department.service.base.url}")
+    private String departmentServiceUrl;
 
     public Task createTask(Task task) {
         // Generate a custom ID for the task
@@ -38,6 +41,8 @@ public class TaskService {
         task.setUpdatedDate(new Date());
         User user = getUserDetails(task.getAssignedToUserName());
         task.setDepartmentId(user.getDepartmentId());
+        Department department = getDepartmentDetails(user.getDepartmentId());
+        task.setDepartmentName(department.getDepartmentName());
 
         return taskRepository.save(task);
     }
@@ -89,5 +94,16 @@ public class TaskService {
         System.out.println("user : " + user);
 
         return user;
+    }
+
+    private Department getDepartmentDetails(String departmentId) {
+        // Build the URL for the Department Service API to check if the department exists
+        String departmentFindUrl = departmentServiceUrl + "/api/departments/fetch/id/" + departmentId;
+        System.out.println("department Find Url : " + departmentFindUrl);
+        // Make a GET request to check if the department exists
+        Department department = restTemplate.getForObject(departmentFindUrl, Department.class);
+        System.out.println("department : " + department);
+
+        return department;
     }
 }
