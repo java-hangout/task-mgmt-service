@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000") // Allow only your frontend URL
+@CrossOrigin(origins = "http://localhost:3000,http://localhost:3001,http://172.19.10.137:3000") // Allow only your frontend URL
 @RequestMapping("/api/tasks")
 @Tag(name = "Task Management", description = "Endpoints for managing tasks")
 public class TaskController {
