@@ -24,6 +24,9 @@ public class TaskService {
     private SequenceGeneratorService sequenceGeneratorService;
 
     @Autowired
+    TaskAuditLogService auditLogService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -57,16 +60,23 @@ public class TaskService {
 
     public Task updateTask(String id, Task task) {
         Optional<Task> task1 = taskRepository.findById(id);
+        Task updateTask = null;
         if (task1.isPresent()) {
             task.setId(id);
             task.setCreatedDate(task1.get().getCreatedDate());
-            return taskRepository.save(task);
+            updateTask = taskRepository.save(task);
+            auditLogService.logChangesForAudit(task1.get(),"Update");
         }
-        return null;
+        return updateTask;
     }
 
     public void deleteTask(String id) {
-        taskRepository.deleteById(id);
+        Optional<Task> task1 = taskRepository.findById(id);
+        if (task1.isPresent()) {
+            Task task = task1.get();
+            taskRepository.deleteById(id);
+            auditLogService.logChangesForAudit(task,"Delete");
+        }
     }
 
     /*public List<Task> getTasksByAssignedToUserId(String userId) {
