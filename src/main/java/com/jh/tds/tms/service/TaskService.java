@@ -45,8 +45,13 @@ public class TaskService {
         User user = getUserDetails(task.getAssignedToUserName());
         task.setDepartmentId(user.getDepartmentId());
         Department department = getDepartmentDetails(user.getDepartmentId());
+        System.out.println("department "+department);
         task.setDepartmentName(department.getDepartmentName());
 
+        task.setBusinessUnitId(department.getBusinessUnitId());
+        System.out.println("department.getBusinessUnitId() "+department.getBusinessUnitId());
+        task.setBusinessUnitName(department.getBusinessUnitName());
+        System.out.println("department.getBusinessUnitName() "+department.getBusinessUnitName());
         return taskRepository.save(task);
     }
 
@@ -56,6 +61,9 @@ public class TaskService {
 
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
+    }
+    public List<Task> getAllTasksByBusinessUnitName(String businessUnitName) {
+        return taskRepository.getTasksByBusinessUnitName(businessUnitName);
     }
 
     public Task updateTask(String id, Task task) {

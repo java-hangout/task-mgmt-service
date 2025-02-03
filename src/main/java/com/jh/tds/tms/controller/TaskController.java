@@ -31,6 +31,11 @@ public class TaskController {
     public List<Task> getAllTasks() {
         return taskService.getAllTasks();
     }
+    @GetMapping("/fetch/businessUnitName/{businessUnitName}")
+    public List<Task> getAllTasksByBusinessUnitName(@PathVariable String businessUnitName) {
+        System.out.println("businessUnitName : "+businessUnitName);
+        return taskService.getAllTasksByBusinessUnitName(businessUnitName);
+    }
 
     @PutMapping("/update/{id}")
     public Task updateTask(@PathVariable String id, @RequestBody Task task) {

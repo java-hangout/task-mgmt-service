@@ -10,4 +10,5 @@ public interface TaskRepository extends MongoRepository<Task, String> {
     List<Task> findByDepartmentId(String departmentId);
     List<Task> findByStatus(String status);
     List<Task> findByAssignedToUserName(String userName);
+    public List<Task> getTasksByBusinessUnitName(String businessUnitName);
 }
